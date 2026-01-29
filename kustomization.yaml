@@ -1,0 +1,51 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: plateforme-electronique
+
+resources:
+  # Infrastructure - Storage (PVC only, PV will be provisioned dynamically)
+  - postgres-pvc.yaml
+  - postgres-configmap.yaml
+  - postgres-init-configmap.yaml
+  - postgres-seed-configmap.yaml
+  - postgres-deployment.yaml
+  - postgres-service.yaml
+  - redis-pvc.yaml
+  - redis-deployment.yaml
+  - redis-service.yaml
+
+  # Security
+  - plateforme-secrets.yaml
+  - keycloak-deployment.yaml
+  - keycloak-service.yaml
+
+  # Discovery
+  - eureka-deployment.yaml
+  - eureka-service.yaml
+
+  # Gateway
+  - api-gateway-deployment.yaml
+  - api-gateway-service.yaml
+
+  # Frontend
+  - frontend-nginx-configmap.yaml
+  - frontend-deployment.yaml
+  - frontend-service.yaml
+
+  # Ingress (pour accès externe)
+  - ingress.yaml
+
+  # Services
+  - user-auth-service-deployment.yaml
+  - user-auth-service.yaml
+  - invoice-service-deployment.yaml
+  - invoice-service.yaml
+  - payment-service-deployment.yaml
+  - payment-service.yaml
+  - subscription-service-deployment.yaml
+  - subscription-service.yaml
+  - notification-service-deployment.yaml
+  - notification-service.yaml
+  - signature-service-deployment.yaml
+  - signature-service.yaml

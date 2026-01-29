@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: plateforme-frontend:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          env:
+            - name: REACT_APP_API_BASE_URL
+              value: /api
+            - name: REACT_APP_KEYCLOAK_URL
+              value: http://keycloak:8080
+            - name: REACT_APP_KEYCLOAK_REALM
+              value: plateforme-electronique
+            - name: REACT_APP_KEYCLOAK_CLIENT_ID
+              value: plateforme-frontend
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: frontend-nginx-config
+            items:
+              - key: default.conf
+                path: default.conf

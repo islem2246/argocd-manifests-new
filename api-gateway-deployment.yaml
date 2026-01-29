@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+        - name: api-gateway
+          image: grassa77/plateforme-gateway:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://eureka-server:8761/eureka/
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+            # Route 0: Invoice Service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_0_ID
+              value: invoice-service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_0_URI
+              value: http://invoice-service:8082
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0
+              value: Path=/api/invoices/**
+            # Route 1: Payment Service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_1_ID
+              value: payment-service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_1_URI
+              value: http://payment-service:8083
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_1_PREDICATES_0
+              value: Path=/api/payments/**
+            # Route 2: Client Service (via Invoice Service)
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2_ID
+              value: client-service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2_URI
+              value: http://invoice-service:8082
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2_PREDICATES_0
+              value: Path=/api/clients/**
+            # Route 3: Subscription Service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_ID
+              value: subscription-service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_URI
+              value: http://subscription-service:8080
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_PREDICATES_0
+              value: Path=/api/subscriptions/**
+            # Route 4: User Auth Service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_4_ID
+              value: user-auth-service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_4_URI
+              value: http://user-auth-service:8081
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_4_PREDICATES_0
+              value: Path=/api/users/**,/api/auth/**
+            # Route 5: Notification Service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_5_ID
+              value: notification-service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_5_URI
+              value: http://notification-service:8080
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_5_PREDICATES_0
+              value: Path=/api/notifications/**
+            # Route 6: Signature Service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_6_ID
+              value: signature-service
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_6_URI
+              value: http://signature-service:8080
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_6_PREDICATES_0
+              value: Path=/api/signatures/**
+            # Keycloak & Redis Config
+            - name: KEYCLOAK_BASE_URL
+              value: http://keycloak:8080
+            - name: REDIS_HOST
+              value: redis
+            - name: REDIS_PORT
+              value: "6379"

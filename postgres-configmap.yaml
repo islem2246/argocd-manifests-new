@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+data:
+  POSTGRES_DB: plateforme_electronique
+  POSTGRES_MULTIPLE_DATABASES: invoice_db,payment_db,subscription_db,notification_db,user_auth_db

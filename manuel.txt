@@ -1,0 +1,220 @@
+================================================================================
+        MANUEL D'ACCÈS - PLATEFORME ÉLECTRONIQUE
+        Déployée sur Minikube avec ArgoCD
+================================================================================
+
+================================================================================
+1. ACCÈS À ARGOCD UI
+================================================================================
+
+Terminal 1 (laisser tourner) :
+------------------------------
+kubectl port-forward svc/argocd-server -n argocd 8443:443
+
+URL : https://localhost:8443
+
+Credentials :
+  - Username : admin
+  - Password : exécuter cette commande pour le récupérer :
+    kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
+
+
+================================================================================
+2. ACCÈS AU FRONTEND ET SERVICES
+================================================================================
+
+------------------------------------------------------------------------------
+OPTION A : Via Ingress (Recommandée pour environnement de développement)
+------------------------------------------------------------------------------
+
+Étape 1 : Récupérer l'IP de Minikube
+    minikube ip
+
+Étape 2 : Ajouter les entrées dans /etc/hosts (remplacer <IP> par l'IP obtenue)
+    sudo nano /etc/hosts
+    
+    Ajouter ces lignes :
+    <IP>  plateforme.local
+    <IP>  auth.plateforme.local
+    <IP>  eureka.plateforme.local
+
+    Ou en une seule commande :
+    echo "$(minikube ip)  plateforme.local auth.plateforme.local eureka.plateforme.local" | sudo tee -a /etc/hosts
+
+Étape 3 : Activer le tunnel Minikube (dans un terminal séparé)
+    minikube tunnel
+
+URLs disponibles :
+    - Frontend      : http://plateforme.local
+    - API Gateway   : http://plateforme.local/api
+    - Keycloak      : http://auth.plateforme.local
+    - Eureka        : http://eureka.plateforme.local
+
+
+------------------------------------------------------------------------------
+OPTION B : Accès rapide avec minikube service (Sans configuration)
+------------------------------------------------------------------------------
+
+Cette option ouvre automatiquement le navigateur avec l'URL correcte.
+
+Frontend :
+    minikube service frontend -n plateforme-electronique
+
+Keycloak :
+    minikube service keycloak -n plateforme-electronique
+
+Eureka :
+    minikube service eureka-server -n plateforme-electronique
+
+Note : L'API Gateway n'est pas exposé en LoadBalancer, utiliser Option C.
+
+
+------------------------------------------------------------------------------
+OPTION C : Port-forward manuel (Contrôle total)
+------------------------------------------------------------------------------
+
+Ouvrir plusieurs terminaux et exécuter :
+
+Terminal 1 - Frontend (port 3000) :
+    kubectl port-forward svc/frontend -n plateforme-electronique 3000:80
+
+Terminal 2 - API Gateway (port 8080) :
+    kubectl port-forward svc/api-gateway -n plateforme-electronique 8080:8080
+
+Terminal 3 - Keycloak (port 8081) :
+    kubectl port-forward svc/keycloak -n plateforme-electronique 8081:8080
+
+Terminal 4 - Eureka (port 8761) :
+    kubectl port-forward svc/eureka-server -n plateforme-electronique 8761:8761
+
+Terminal 5 - PostgreSQL (port 5432) - pour debug :
+    kubectl port-forward svc/postgresql -n plateforme-electronique 5432:5432
+
+Terminal 6 - Redis (port 6379) - pour debug :
+    kubectl port-forward svc/redis -n plateforme-electronique 6379:6379
+
+URLs avec port-forward :
+    - Frontend      : http://localhost:3000
+    - API Gateway   : http://localhost:8080
+    - Keycloak      : http://localhost:8081
+    - Eureka        : http://localhost:8761
+
+
+================================================================================
+3. COMMANDES DE VÉRIFICATION
+================================================================================
+
+État des pods :
+    kubectl get pods -n plateforme-electronique
+
+État des pods (watch mode) :
+    kubectl get pods -n plateforme-electronique -w
+
+État des services :
+    kubectl get svc -n plateforme-electronique
+
+État des ingress :
+    kubectl get ingress -n plateforme-electronique
+
+État des PVC :
+    kubectl get pvc -n plateforme-electronique
+
+État de l'application ArgoCD :
+    kubectl get application plateforme-electronique -n argocd
+
+Logs d'un pod spécifique :
+    kubectl logs -f deployment/<nom-deployment> -n plateforme-electronique
+
+Exemples :
+    kubectl logs -f deployment/frontend -n plateforme-electronique
+    kubectl logs -f deployment/api-gateway -n plateforme-electronique
+    kubectl logs -f deployment/postgresql -n plateforme-electronique
+    kubectl logs -f deployment/keycloak -n plateforme-electronique
+
+
+================================================================================
+4. DÉPANNAGE
+================================================================================
+
+Problème : Les pods restent en "Pending"
+-----------------------------------------
+    kubectl describe pod <nom-pod> -n plateforme-electronique
+    kubectl get events -n plateforme-electronique --sort-by='.lastTimestamp'
+
+Problème : PostgreSQL ne démarre pas
+-------------------------------------
+    kubectl logs deployment/postgresql -n plateforme-electronique
+    kubectl describe pvc postgres-pvc -n plateforme-electronique
+
+Problème : Services ne s'enregistrent pas dans Eureka
+------------------------------------------------------
+    1. Vérifier que Eureka est UP :
+       kubectl logs deployment/eureka-server -n plateforme-electronique
+    
+    2. Accéder à Eureka UI et vérifier les instances enregistrées
+
+Problème : Erreur de connexion à la base de données
+----------------------------------------------------
+    1. Vérifier que PostgreSQL est prêt :
+       kubectl exec -it deployment/postgresql -n plateforme-electronique -- pg_isready
+    
+    2. Vérifier les bases créées :
+       kubectl exec -it deployment/postgresql -n plateforme-electronique -- psql -U plateforme_user -c "\l"
+
+Forcer la resynchronisation ArgoCD :
+-------------------------------------
+    kubectl patch application plateforme-electronique -n argocd \
+      --type merge \
+      -p '{"operation":{"initiatedBy":{"username":"admin"},"sync":{}}}'
+
+
+================================================================================
+5. CREDENTIALS PAR DÉFAUT
+================================================================================
+
+PostgreSQL :
+    - User     : plateforme_user
+    - Password : plateforme_pass
+    - Bases    : invoice_db, payment_db, subscription_db, notification_db, user_auth_db, keycloak
+
+Keycloak Admin :
+    - User     : admin
+    - Password : admin
+    - Realm    : plateforme-electronique
+
+ArgoCD :
+    - User     : admin
+    - Password : (voir commande section 1)
+
+
+================================================================================
+6. NETTOYAGE
+================================================================================
+
+Supprimer l'application (garde ArgoCD) :
+    kubectl delete application plateforme-electronique -n argocd
+    kubectl delete namespace plateforme-electronique
+
+Supprimer ArgoCD :
+    kubectl delete namespace argocd
+
+Tout supprimer et repartir de zéro :
+    minikube delete
+    minikube start --cpus=4 --memory=8192
+
+
+================================================================================
+7. RÉSUMÉ DES URLS
+================================================================================
+
++------------------+----------------------------------+------------------------+
+| Service          | Option A (Ingress)               | Option C (Port-forward)|
++------------------+----------------------------------+------------------------+
+| Frontend         | http://plateforme.local          | http://localhost:3000  |
+| API Gateway      | http://plateforme.local/api      | http://localhost:8080  |
+| Keycloak         | http://auth.plateforme.local     | http://localhost:8081  |
+| Eureka           | http://eureka.plateforme.local   | http://localhost:8761  |
+| ArgoCD           | https://localhost:8443           | https://localhost:8443 |
++------------------+----------------------------------+------------------------+
+
+================================================================================

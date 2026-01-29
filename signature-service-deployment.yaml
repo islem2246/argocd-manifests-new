@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: signature-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: signature-service
+  template:
+    metadata:
+      labels:
+        app: signature-service
+    spec:
+      containers:
+        - name: signature-service
+          image: grassa77/plateforme-signature:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: http://eureka-server:8761/eureka/
