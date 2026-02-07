@@ -15,7 +15,7 @@ spec:
       containers:
         - name: api-gateway
           image: yassmineg/plateforme-gateway:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:

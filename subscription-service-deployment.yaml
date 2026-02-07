@@ -15,7 +15,7 @@ spec:
       containers:
         - name: subscription-service
           image: yassmineg/plateforme-subscription:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:

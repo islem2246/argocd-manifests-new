@@ -15,7 +15,7 @@ spec:
       containers:
         - name: payment-service
           image: yassmineg/plateforme-payment:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8083
           env:

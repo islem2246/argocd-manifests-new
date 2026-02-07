@@ -15,7 +15,7 @@ spec:
       containers:
         - name: notification-service
           image: yassmineg/plateforme-notification:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:

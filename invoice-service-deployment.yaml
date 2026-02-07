@@ -15,7 +15,7 @@ spec:
       containers:
         - name: invoice-service
           image: yassmineg/plateforme-invoice:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8082
           env:
