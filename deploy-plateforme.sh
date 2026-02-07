@@ -2,8 +2,8 @@
 
 #===============================================================================
 # SCRIPT DE DÉPLOIEMENT - PLATEFORME ÉLECTRONIQUE
-# Auteur: Nordine Grassa
-# Date: 2026-01-29
+# Auteur: ISLAM  MANAI
+# Update Date: 2026-02-7
 # Description: Déploie la plateforme électronique sur Minikube avec ArgoCD
 #===============================================================================
 
@@ -18,7 +18,7 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Configuration
-REPO_URL="https://github.com/ngrassa/argocd-manifests.git"
+REPO_URL="https://github.com/islem2246/argocd-manifests-new.git"
 NAMESPACE="plateforme-electronique"
 ARGOCD_NAMESPACE="argocd"
 APP_NAME="plateforme-electronique"
@@ -338,13 +338,12 @@ echo ""
 echo -e "${YELLOW}# Plateforme Électronique${NC}"
 echo -e "${GREEN}${MINIKUBE_IP}  plateforme.local${NC}"
 echo -e "${GREEN}${MINIKUBE_IP}  auth.plateforme.local${NC}"
-echo -e "${GREEN}${MINIKUBE_IP}  eureka.plateforme.local${NC}"
 echo ""
 
 # Commande pour ajouter automatiquement (optionnel)
 echo -e "${CYAN}Ou exécutez cette commande (nécessite sudo):${NC}"
 echo ""
-echo "sudo bash -c 'echo \"${MINIKUBE_IP}  plateforme.local auth.plateforme.local eureka.plateforme.local\" >> /etc/hosts'"
+echo "sudo bash -c 'echo \"${MINIKUBE_IP}  plateforme.local auth.plateforme.local\" >> /etc/hosts'"
 echo ""
 
 #===============================================================================
@@ -380,7 +379,6 @@ echo ""
 echo -e "  Frontend:  ${GREEN}http://plateforme.local${NC}"
 echo -e "  API:       ${GREEN}http://plateforme.local/api${NC}"
 echo -e "  Keycloak:  ${GREEN}http://auth.plateforme.local${NC}"
-echo -e "  Eureka:    ${GREEN}http://eureka.plateforme.local${NC}"
 echo ""
 
 echo -e "${CYAN}Alternative avec minikube tunnel (dans un autre terminal):${NC}"

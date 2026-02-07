@@ -36,10 +36,9 @@ OPTION A : Via Ingress (Recommandée pour environnement de développement)
     Ajouter ces lignes :
     <IP>  plateforme.local
     <IP>  auth.plateforme.local
-    <IP>  eureka.plateforme.local
 
     Ou en une seule commande :
-    echo "$(minikube ip)  plateforme.local auth.plateforme.local eureka.plateforme.local" | sudo tee -a /etc/hosts
+    echo "$(minikube ip)  plateforme.local auth.plateforme.local" | sudo tee -a /etc/hosts
 
 Étape 3 : Activer le tunnel Minikube (dans un terminal séparé)
     minikube tunnel
@@ -48,7 +47,6 @@ URLs disponibles :
     - Frontend      : http://plateforme.local
     - API Gateway   : http://plateforme.local/api
     - Keycloak      : http://auth.plateforme.local
-    - Eureka        : http://eureka.plateforme.local
 
 
 ------------------------------------------------------------------------------
@@ -63,8 +61,6 @@ Frontend :
 Keycloak :
     minikube service keycloak -n plateforme-electronique
 
-Eureka :
-    minikube service eureka-server -n plateforme-electronique
 
 Note : L'API Gateway n'est pas exposé en LoadBalancer, utiliser Option C.
 
@@ -84,20 +80,16 @@ Terminal 2 - API Gateway (port 8080) :
 Terminal 3 - Keycloak (port 8081) :
     kubectl port-forward svc/keycloak -n plateforme-electronique 8081:8080
 
-Terminal 4 - Eureka (port 8761) :
-    kubectl port-forward svc/eureka-server -n plateforme-electronique 8761:8761
-
-Terminal 5 - PostgreSQL (port 5432) - pour debug :
+Terminal 4 - PostgreSQL (port 5432) - pour debug :
     kubectl port-forward svc/postgresql -n plateforme-electronique 5432:5432
 
-Terminal 6 - Redis (port 6379) - pour debug :
+Terminal 5 - Redis (port 6379) - pour debug :
     kubectl port-forward svc/redis -n plateforme-electronique 6379:6379
 
 URLs avec port-forward :
     - Frontend      : http://localhost:3000
     - API Gateway   : http://localhost:8080
     - Keycloak      : http://localhost:8081
-    - Eureka        : http://localhost:8761
 
 
 ================================================================================
@@ -145,13 +137,6 @@ Problème : PostgreSQL ne démarre pas
 -------------------------------------
     kubectl logs deployment/postgresql -n plateforme-electronique
     kubectl describe pvc postgres-pvc -n plateforme-electronique
-
-Problème : Services ne s'enregistrent pas dans Eureka
-------------------------------------------------------
-    1. Vérifier que Eureka est UP :
-       kubectl logs deployment/eureka-server -n plateforme-electronique
-    
-    2. Accéder à Eureka UI et vérifier les instances enregistrées
 
 Problème : Erreur de connexion à la base de données
 ----------------------------------------------------
@@ -213,7 +198,6 @@ Tout supprimer et repartir de zéro :
 | Frontend         | http://plateforme.local          | http://localhost:3000  |
 | API Gateway      | http://plateforme.local/api      | http://localhost:8080  |
 | Keycloak         | http://auth.plateforme.local     | http://localhost:8081  |
-| Eureka           | http://eureka.plateforme.local   | http://localhost:8761  |
 | ArgoCD           | https://localhost:8443           | https://localhost:8443 |
 +------------------+----------------------------------+------------------------+
 

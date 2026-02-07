@@ -39,14 +39,3 @@ spec:
                 name: keycloak
                 port:
                   number: 8080
-    # Eureka - monitoring des services (optionnel)
-    - host: eureka.plateforme.local
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: eureka-server
-                port:
-                  number: 8761

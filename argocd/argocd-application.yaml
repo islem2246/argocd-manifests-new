@@ -8,8 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    # Remplacer par l'URL de ton dépôt Git
-    repoURL: https://github.com/YOUR_USERNAME/argocd-manifests.git
+    repoURL: https://github.com/islem2246/argocd-manifests-new.git
     targetRevision: HEAD
     path: .
   destination:

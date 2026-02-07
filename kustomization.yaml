@@ -20,9 +20,6 @@ resources:
   - keycloak-deployment.yaml
   - keycloak-service.yaml
 
-  # Discovery
-  - eureka-deployment.yaml
-  - eureka-service.yaml
 
   # Gateway
   - api-gateway-deployment.yaml

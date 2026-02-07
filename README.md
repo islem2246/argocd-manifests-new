@@ -72,7 +72,6 @@ Ajouter dans `/etc/hosts`:
 # Plateforme Électronique
 <INGRESS_IP>  plateforme.local
 <INGRESS_IP>  auth.plateforme.local
-<INGRESS_IP>  eureka.plateforme.local
 ```
 
 Pour obtenir l'IP de l'Ingress:
@@ -87,7 +86,6 @@ kubectl get ingress -n plateforme-electronique
 | Frontend | http://plateforme.local |
 | API Gateway | http://plateforme.local/api |
 | Keycloak | http://auth.plateforme.local |
-| Eureka | http://eureka.plateforme.local |
 
 ## 🔍 Vérification du déploiement
 
@@ -116,12 +114,6 @@ kubectl get pvc -n plateforme-electronique
 kubectl logs deployment/postgresql -n plateforme-electronique
 ```
 
-### Services ne s'enregistrent pas dans Eureka
-```bash
-# Vérifier que Eureka est accessible
-kubectl port-forward svc/eureka-server 8761:8761 -n plateforme-electronique
-# Ouvrir http://localhost:8761
-```
 
 ### Keycloak ne démarre pas
 ```bash
@@ -139,8 +131,6 @@ argocd-manifests-corrected/
 │   └── plateforme-secrets.yaml  # Secrets
 ├── Security
 │   └── keycloak-*.yaml          # Keycloak
-├── Discovery
-│   └── eureka-*.yaml            # Eureka Server
 ├── Gateway
 │   └── api-gateway-*.yaml       # Spring Cloud Gateway
 ├── Frontend
