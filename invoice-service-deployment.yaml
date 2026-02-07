@@ -39,3 +39,9 @@ spec:
               value: org.hibernate.dialect.PostgreSQLDialect
             - name: SPRING_SQL_INIT_MODE
               value: never
+            - name: EUREKA_CLIENT_ENABLED
+              value: "false"
+            - name: SPRING_CLOUD_DISCOVERY_ENABLED
+              value: "false"
+            - name: EUREKA_CLIENT_REGISTER_WITH_EUREKA
+              value: "false"
