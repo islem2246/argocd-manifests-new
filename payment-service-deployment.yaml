@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: payment-service
-          image: grassa77/plateforme-payment:latest
+          image: yassmineg/plateforme-payment:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8083

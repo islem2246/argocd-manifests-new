@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: invoice-service
-          image: grassa77/plateforme-invoice:latest
+          image: yassmineg/plateforme-invoice:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8082

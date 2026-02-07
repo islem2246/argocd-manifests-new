@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: notification-service
-          image: grassa77/plateforme-notification:latest
+          image: yassmineg/plateforme-notification:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
